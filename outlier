@@ -1,0 +1,14 @@
+#outlier
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the dataset
+df = pd.read_csv("retractions35215.csv")
+
+# Plot box plot to visualize outliers in CitationCount
+plt.figure(figsize=(8,6))
+plt.boxplot(df['CitationCount'], vert=False)
+plt.title('Box plot of CitationCount to identify outliers')
+plt.xlabel('CitationCount')
+plt.grid(True)
+plt.show()
