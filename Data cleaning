@@ -1,0 +1,49 @@
+#datacleaning
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the dataset
+df = pd.read_csv("Cretractions35215.csv")
+
+# Convert RetractionDate to datetime
+df['RetractionDate'] = pd.to_datetime(df['RetractionDate'], format='%d/%m/%Y')
+
+# Extract year from RetractionDate
+df['Year'] = df['RetractionDate'].dt.year
+
+# Group by Year and count retractions
+retraction_counts = df.groupby('Year').size()
+
+# Plot the trend
+plt.figure(figsize=(10,6))
+plt.plot(retraction_counts.index, retraction_counts.values, marker='o', linestyle='-')
+plt.title('Retraction Counts Over the Years')
+plt.xlabel('Year')
+plt.ylabel('Retraction Counts')
+plt.grid(True)
+plt.show()
+
+# Check for missing values
+missing_values = df.isnull().sum()
+print("Missing Values:\n", missing_values)
+
+# Drop rows with missing values
+df.dropna(inplace=True)
+
+# Check for duplicate records
+duplicate_records = df.duplicated().sum()
+print("Duplicate Records:", duplicate_records)
+
+# Remove duplicate records
+df.drop_duplicates(inplace=True)
+
+# Check for inconsistencies in categorical variables
+print("Unique values in 'RetractionNature':\n", df['RetractionNature'].unique())
+print("Unique values in 'ArticleType':\n", df['ArticleType'].unique())
+
+# Check for outliers in numerical variables
+plt.figure(figsize=(10,6))
+plt.boxplot(df['CitationCount'])
+plt.title('Boxplot of Citation Count')
+plt.xlabel('Citation Count')
+plt.show()
