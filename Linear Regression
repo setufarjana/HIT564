@@ -1,1 +1,50 @@
+#regression model
+# Load the necessary libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+
+# Load the dataset
+df = pd.read_csv(r"C:\Users\S\Downloads\report farjana\cleaned_retractions.csv")
+
+# Display the first few rows of the dataset
+print(df.head())
+
+# Perform data transformation
+# Convert CitationCount to categorical variable
+df['CitationCount_Category'] = pd.cut(df['CitationCount'], bins=[-np.inf, 10, 100, np.inf], labels=['Low', 'Medium', 'High'])
+
+# Convert RetractionDate to categorical variable
+df['RetractionDate'] = pd.to_datetime(df['RetractionDate'], format='%d/%m/%Y')
+df['RetractionYear'] = df['RetractionDate'].dt.year
+df['RetractionYear_Category'] = pd.cut(df['RetractionYear'], bins=[0, 2015, 2020, 2025], labels=['2010-2015', '2016-2020', '2021-2025'])
+
+# Convert ArticleType to categorical variable
+df['ArticleType_Category'] = df['ArticleType'].apply(lambda x: 'Research Article' if x == 'Research Article' else 'Other')
+
+# Convert RetractionNature to categorical variable
+df['RetractionNature_Category'] = df['RetractionNature'].apply(lambda x: 'Error' if 'Error' in x else ('Misconduct' if 'Misconduct' in x else 'Other'))
+
+# Convert Paywalled to categorical variable
+df['Paywalled_Category'] = df['Paywalled'].apply(lambda x: 'Yes' if x == 'Yes' else 'No')
+
+# Display the first few rows of the transformed dataset
+print(df.head())
+
+# Create the table of categorization
+categorization_table = pd.DataFrame({
+    'Variable': ['CitationCount', 'RetractionDate', 'ArticleType', 'RetractionNature', 'Paywalled'],
+    'Category': ['Low, Medium, High', 'Yearly, Quarterly, Monthly, Weekly', 'Research Article, Other', 'Error, Misconduct, Other', 'Yes, No'],
+    'Criteria': ['CitationCount <= 10, 10 < CitationCount <= 100, CitationCount > 100', 'Yearly time periods (e.g., 2015, 2016, etc.), Quarterly time periods (Q1, Q2, Q3, Q4), Monthly time periods (Jan, Feb, Mar, etc.), Weekly time periods (Week 1, Week 2, etc.)', 'Articles categorized as research articles, Non-research articles such as editorials, letters, etc.', 'Retractions due to errors in the research, Retractions due to academic misconduct, Retractions due to reasons other than error or misconduct', 'Articles behind a paywall, Articles not behind a paywall']
+})
+
+# Display the table of categorization
+print("\nTable of Categorization:")
+print(categorization_table)
 
