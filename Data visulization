@@ -1,0 +1,54 @@
+#data  viuslization
+
+    import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the dataset
+df = pd.read_csv("retractions35215.csv")
+
+# Convert RetractionDate to datetime
+df['RetractionDate'] = pd.to_datetime(df['RetractionDate'], format='%d/%m/%Y')
+
+# Extract year from RetractionDate
+df['Year'] = df['RetractionDate'].dt.year
+
+# Group by Year and count retractions
+retraction_counts = df.groupby('Year').size()
+
+# Plot the trend
+plt.figure(figsize=(10,6))
+plt.plot(retraction_counts.index, retraction_counts.values, marker='o', linestyle='-')
+plt.title('Retraction Counts Over the Years')
+plt.xlabel('Year')
+plt.ylabel('Retraction Counts')
+plt.grid(True)
+plt.show()
+
+# Visualisation
+
+# Plotting the number of retractions by country
+plt.figure(figsize=(12,6))
+df['Country'].value_counts().head(10).plot(kind='bar', color='skyblue')
+plt.title('Top 10 Countries with Most Retractions')
+plt.xlabel('Country')
+plt.ylabel('Number of Retractions')
+plt.xticks(rotation=45)
+plt.show()
+
+# Plotting the distribution of retraction reasons
+reason_counts = df['Reason'].str.split(';').explode().value_counts().head(10)
+plt.figure(figsize=(12,6))
+reason_counts.plot(kind='bar', color='salmon')
+plt.title('Top 10 Retraction Reasons')
+plt.xlabel('Reason')
+plt.ylabel('Number of Retractions')
+plt.xticks(rotation=45)
+plt.show()
+
+# Plotting the distribution of retraction types
+type_counts = df['RetractionNature'].value_counts()
+plt.figure(figsize=(10,6))
+type_counts.plot(kind='pie', autopct='%1.1f%%', startangle=140)
+plt.title('Distribution of Retraction Types')
+plt.ylabel('')
+plt.show()
