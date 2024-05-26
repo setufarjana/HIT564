@@ -1,0 +1,161 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the dataset
+df = pd.read_csv(r"C:\Users\S\Downloads\report farjana\retractions35215.csv")
+
+# Check for missing values
+missing_values = df.isnull().sum()
+print("Missing Values:\n", missing_values)
+
+# Drop rows with missing values
+df.dropna(inplace=True)
+
+# Check for duplicate records
+duplicate_records = df.duplicated().sum()
+print("Duplicate Records:", duplicate_records)
+
+# Remove duplicate records
+df.drop_duplicates(inplace=True)
+
+# Check for inconsistencies in categorical variables
+print("Unique values in 'RetractionNature':\n", df['RetractionNature'].unique())
+print("Unique values in 'ArticleType':\n", df['ArticleType'].unique())
+
+# Check for outliers in numerical variables
+plt.figure(figsize=(10,6))
+plt.boxplot(df['CitationCount'])
+plt.title('Boxplot of Citation Count')
+plt.xlabel('Citation Count')
+plt.show()
+
+
+
+# Model evaluation
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+print("\nLinear Regression Model Performance:")
+print("Mean Squared Error:", mse)
+print("R-squared:", r2)
+
+#model performnce
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+
+# Load the dataset
+df = pd.read_csv(r"C:\Users\S\Downloads\report farjana\cleaned_retractions.csv")
+
+# Data Transformation
+df['RetractionDate'] = pd.to_datetime(df['RetractionDate'], format='%d/%m/%Y')
+df['RetractionYear'] = df['RetractionDate'].dt.year
+
+# Perform multiple linear regression analysis
+# Define X and y
+X = df[['RetractionYear']]
+y = df['CitationCount']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Apply linear regression
+multi_lin_reg = LinearRegression()
+multi_lin_reg.fit(X_train, y_train)
+
+# Predict the CitationCount
+y_pred_multi = multi_lin_reg.predict(X_test)
+
+# Model evaluation
+mse_multi = mean_squared_error(y_test, y_pred_multi)
+r2_multi = r2_score(y_test, y_pred_multi)
+
+print("\nMultiple Linear Regression Model Performance:")
+print("Mean Squared Error:", mse_multi)
+print("R-squared:", r2_multi)
+
+# Comparison of Regression versus Classification
+# Convert CitationCount to categorical variable for classification
+df['CitationCount_Category'] = pd.cut(df['CitationCount'], bins=[-np.inf, 10, 100, np.inf], labels=['Low', 'Medium', 'High'])
+
+# Define X and y for classification
+X_class = df[['RetractionYear']]
+y_class = df['CitationCount_Category']
+
+# Split the data into training and testing sets for classification
+X_train_class, X_test_class, y_train_class, y_test_class = train_test_split(X_class, y_class, test_size=0.2, random_state=42)
+
+# Decision Tree Classifier
+dt_classifier = DecisionTreeClassifier(random_state=42)
+dt_classifier.fit(X_train_class, y_train_class)
+dt_acc = dt_classifier.score(X_test_class, y_test_class)
+
+# Random Forest Classifier
+rf_classifier = RandomForestClassifier(random_state=42)
+rf_classifier.fit(X_train_class, y_train_class)
+rf_acc = rf_classifier.score(X_test_class, y_test_class)
+
+print("\nClassification Model Performances:")
+print("Decision Tree Accuracy:", dt_acc)
+print("Random Forest Accuracy:", rf_acc)
+
+# Analysis of Variables and Practical Significance of Findings
+# Extract the coefficients and their corresponding variable names
+coefficients = multi_lin_reg.coef_
+variable_names = ['RetractionYear']
+
+# Create a DataFrame to display the coefficients
+coefficients_df = pd.DataFrame({'Variable': variable_names, 'Coefficient': coefficients})
+print("\nCoefficients of Multiple Linear Regression Model:")
+print(coefficients_df)
+
+# Visualizations
+# Scatter plot for multiple linear regression
+plt.figure(figsize=(10, 6))
+plt.scatter(X_test, y_test, color='blue', label='Actual')
+plt.plot(X_test, y_pred_multi, color='red', linewidth=2, label='Predicted')
+plt.title('Multiple Linear Regression: Actual vs Predicted CitationCount')
+plt.xlabel('RetractionYear')
+plt.ylabel('CitationCount')
+plt.legend()
+plt.show()
+
+# Bar plot for coefficients
+plt.figure(figsize=(8, 5))
+sns.barplot(x='Variable', y='Coefficient', data=coefficients_df)
+plt.title('Coefficients of Multiple Linear Regression Model')
+plt.xlabel('Variable')
+plt.ylabel('Coefficient')
+plt.show()
+
+# Bar plot for classification model performances
+models = ['Decision Tree', 'Random Forest']
+accuracies = [dt_acc, rf_acc]
+plt.figure(figsize=(8, 5))
+sns.barplot(x=models, y=accuracies)
+plt.title('Classification Model Performances')
+plt.xlabel('Model')
+plt.ylabel('Accuracy')
+plt.ylim(0, 1)
+plt.show()
+
+# Displaying tables
+# Table for Multiple Linear Regression Model Performance
+multi_reg_table = pd.DataFrame({"Mean Squared Error": [mse_multi], "R-squared": [r2_multi]})
+print("\nMultiple Linear Regression Model Performance:")
+print(multi_reg_table)
+
+# Table for Classification Model Performances
+class_model_table = pd.DataFrame({"Decision Tree Accuracy": [dt_acc], "Random Forest Accuracy": [rf_acc]})
+print("\nClassification Model Performances:")
+print(class_model_table)
+
+
