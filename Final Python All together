@@ -1,0 +1,391 @@
+
+#trendanalysis
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the dataset
+df = pd.read_csv(r"C:\Users\S\Downloads\report farjana\retractions35215.csv")
+
+# Convert RetractionDate to datetime
+df['RetractionDate'] = pd.to_datetime(df['RetractionDate'], format='%d/%m/%Y')
+
+# Extract year from RetractionDate
+df['Year'] = df['RetractionDate'].dt.year
+
+# Group by Year and count retractions
+retraction_counts = df.groupby('Year').size()
+
+# Plot the trend
+plt.figure(figsize=(10,6))
+plt.plot(retraction_counts.index, retraction_counts.values, marker='o', linestyle='-')
+plt.title('Retraction Counts Over the Years')
+plt.xlabel('Year')
+plt.ylabel('Retraction Counts')
+plt.grid(True)
+plt.show()
+
+
+
+#datacleaning
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the dataset
+df = pd.read_csv(r"C:\Users\S\Downloads\report farjana\retractions35215.csv")
+
+# Convert RetractionDate to datetime
+df['RetractionDate'] = pd.to_datetime(df['RetractionDate'], format='%d/%m/%Y')
+
+# Extract year from RetractionDate
+df['Year'] = df['RetractionDate'].dt.year
+
+# Group by Year and count retractions
+retraction_counts = df.groupby('Year').size()
+
+# Plot the trend
+plt.figure(figsize=(10,6))
+plt.plot(retraction_counts.index, retraction_counts.values, marker='o', linestyle='-')
+plt.title('Retraction Counts Over the Years')
+plt.xlabel('Year')
+plt.ylabel('Retraction Counts')
+plt.grid(True)
+plt.show()
+
+# Check for missing values
+missing_values = df.isnull().sum()
+print("Missing Values:\n", missing_values)
+
+# Drop rows with missing values
+df.dropna(inplace=True)
+
+# Check for duplicate records
+duplicate_records = df.duplicated().sum()
+print("Duplicate Records:", duplicate_records)
+
+# Remove duplicate records
+df.drop_duplicates(inplace=True)
+
+# Check for inconsistencies in categorical variables
+print("Unique values in 'RetractionNature':\n", df['RetractionNature'].unique())
+print("Unique values in 'ArticleType':\n", df['ArticleType'].unique())
+
+# Check for outliers in numerical variables
+plt.figure(figsize=(10,6))
+plt.boxplot(df['CitationCount'])
+plt.title('Boxplot of Citation Count')
+plt.xlabel('Citation Count')
+plt.show()
+
+
+
+
+#correlation
+import os
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# File path
+file_path = "C:/Users/S/Downloads/report farjana/retractions35215.csv"
+
+# Check if the file exists
+if os.path.exists(file_path):
+    # Load your DataFrame
+    df = pd.read_csv(file_path)
+
+    # Drop non-numeric columns
+    numeric_df = df.select_dtypes(include=['number'])
+
+    # Calculate correlation matrix
+    correlation_matrix = numeric_df.corr()
+
+    # Create a heatmap
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f")
+    plt.title('Correlation Heatmap')
+    plt.show()
+else:
+    print("File not found!")
+
+
+#data  viuslization
+
+    import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the dataset
+df = pd.read_csv(r"C:\Users\S\Downloads\report farjana\retractions35215.csv")
+
+# Convert RetractionDate to datetime
+df['RetractionDate'] = pd.to_datetime(df['RetractionDate'], format='%d/%m/%Y')
+
+# Extract year from RetractionDate
+df['Year'] = df['RetractionDate'].dt.year
+
+# Group by Year and count retractions
+retraction_counts = df.groupby('Year').size()
+
+# Plot the trend
+plt.figure(figsize=(10,6))
+plt.plot(retraction_counts.index, retraction_counts.values, marker='o', linestyle='-')
+plt.title('Retraction Counts Over the Years')
+plt.xlabel('Year')
+plt.ylabel('Retraction Counts')
+plt.grid(True)
+plt.show()
+
+# Visualisation
+
+# Plotting the number of retractions by country
+plt.figure(figsize=(12,6))
+df['Country'].value_counts().head(10).plot(kind='bar', color='skyblue')
+plt.title('Top 10 Countries with Most Retractions')
+plt.xlabel('Country')
+plt.ylabel('Number of Retractions')
+plt.xticks(rotation=45)
+plt.show()
+
+# Plotting the distribution of retraction reasons
+reason_counts = df['Reason'].str.split(';').explode().value_counts().head(10)
+plt.figure(figsize=(12,6))
+reason_counts.plot(kind='bar', color='salmon')
+plt.title('Top 10 Retraction Reasons')
+plt.xlabel('Reason')
+plt.ylabel('Number of Retractions')
+plt.xticks(rotation=45)
+plt.show()
+
+# Plotting the distribution of retraction types
+type_counts = df['RetractionNature'].value_counts()
+plt.figure(figsize=(10,6))
+type_counts.plot(kind='pie', autopct='%1.1f%%', startangle=140)
+plt.title('Distribution of Retraction Types')
+plt.ylabel('')
+plt.show()
+
+
+
+#outlier
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the dataset
+df = pd.read_csv(r"C:\Users\S\Downloads\report farjana\retractions35215.csv")
+
+# Plot box plot to visualize outliers in CitationCount
+plt.figure(figsize=(8,6))
+plt.boxplot(df['CitationCount'], vert=False)
+plt.title('Box plot of CitationCount to identify outliers')
+plt.xlabel('CitationCount')
+plt.grid(True)
+plt.show()
+
+
+
+
+#regression model
+# Load the necessary libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+
+# Load the dataset
+df = pd.read_csv(r"C:\Users\S\Downloads\report farjana\cleaned_retractions.csv")
+
+# Display the first few rows of the dataset
+print(df.head())
+
+# Perform data transformation
+# Convert CitationCount to categorical variable
+df['CitationCount_Category'] = pd.cut(df['CitationCount'], bins=[-np.inf, 10, 100, np.inf], labels=['Low', 'Medium', 'High'])
+
+# Convert RetractionDate to categorical variable
+df['RetractionDate'] = pd.to_datetime(df['RetractionDate'], format='%d/%m/%Y')
+df['RetractionYear'] = df['RetractionDate'].dt.year
+df['RetractionYear_Category'] = pd.cut(df['RetractionYear'], bins=[0, 2015, 2020, 2025], labels=['2010-2015', '2016-2020', '2021-2025'])
+
+# Convert ArticleType to categorical variable
+df['ArticleType_Category'] = df['ArticleType'].apply(lambda x: 'Research Article' if x == 'Research Article' else 'Other')
+
+# Convert RetractionNature to categorical variable
+df['RetractionNature_Category'] = df['RetractionNature'].apply(lambda x: 'Error' if 'Error' in x else ('Misconduct' if 'Misconduct' in x else 'Other'))
+
+# Convert Paywalled to categorical variable
+df['Paywalled_Category'] = df['Paywalled'].apply(lambda x: 'Yes' if x == 'Yes' else 'No')
+
+# Display the first few rows of the transformed dataset
+print(df.head())
+
+# Create the table of categorization
+categorization_table = pd.DataFrame({
+    'Variable': ['CitationCount', 'RetractionDate', 'ArticleType', 'RetractionNature', 'Paywalled'],
+    'Category': ['Low, Medium, High', 'Yearly, Quarterly, Monthly, Weekly', 'Research Article, Other', 'Error, Misconduct, Other', 'Yes, No'],
+    'Criteria': ['CitationCount <= 10, 10 < CitationCount <= 100, CitationCount > 100', 'Yearly time periods (e.g., 2015, 2016, etc.), Quarterly time periods (Q1, Q2, Q3, Q4), Monthly time periods (Jan, Feb, Mar, etc.), Weekly time periods (Week 1, Week 2, etc.)', 'Articles categorized as research articles, Non-research articles such as editorials, letters, etc.', 'Retractions due to errors in the research, Retractions due to academic misconduct, Retractions due to reasons other than error or misconduct', 'Articles behind a paywall, Articles not behind a paywall']
+})
+
+# Display the table of categorization
+print("\nTable of Categorization:")
+print(categorization_table)
+
+# Regression Analysis
+# Define X and y
+X = df[['RetractionYear_Category', 'ArticleType_Category', 'RetractionNature_Category', 'Paywalled_Category']]
+y = df['CitationCount']
+
+# Perform one-hot encoding
+X = pd.get_dummies(X, drop_first=True)
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Standardize the features
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Perform Principal Component Analysis (PCA)
+pca = PCA(n_components=3)
+X_train_pca = pca.fit_transform(X_train_scaled)
+X_test_pca = pca.transform(X_test_scaled)
+
+# Apply linear regression
+lin_reg = LinearRegression()
+lin_reg.fit(X_train_pca, y_train)
+
+# Predict the CitationCount
+y_pred = lin_reg.predict(X_test_pca)
+
+# Model evaluation
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+print("\nLinear Regression Model Performance:")
+print("Mean Squared Error:", mse)
+print("R-squared:", r2)
+
+#model performnce
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+
+# Load the dataset
+df = pd.read_csv(r"C:\Users\S\Downloads\report farjana\cleaned_retractions.csv")
+
+# Data Transformation
+df['RetractionDate'] = pd.to_datetime(df['RetractionDate'], format='%d/%m/%Y')
+df['RetractionYear'] = df['RetractionDate'].dt.year
+
+# Perform multiple linear regression analysis
+# Define X and y
+X = df[['RetractionYear']]
+y = df['CitationCount']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Apply linear regression
+multi_lin_reg = LinearRegression()
+multi_lin_reg.fit(X_train, y_train)
+
+# Predict the CitationCount
+y_pred_multi = multi_lin_reg.predict(X_test)
+
+# Model evaluation
+mse_multi = mean_squared_error(y_test, y_pred_multi)
+r2_multi = r2_score(y_test, y_pred_multi)
+
+print("\nMultiple Linear Regression Model Performance:")
+print("Mean Squared Error:", mse_multi)
+print("R-squared:", r2_multi)
+
+# Comparison of Regression versus Classification
+# Convert CitationCount to categorical variable for classification
+df['CitationCount_Category'] = pd.cut(df['CitationCount'], bins=[-np.inf, 10, 100, np.inf], labels=['Low', 'Medium', 'High'])
+
+# Define X and y for classification
+X_class = df[['RetractionYear']]
+y_class = df['CitationCount_Category']
+
+# Split the data into training and testing sets for classification
+X_train_class, X_test_class, y_train_class, y_test_class = train_test_split(X_class, y_class, test_size=0.2, random_state=42)
+
+# Decision Tree Classifier
+dt_classifier = DecisionTreeClassifier(random_state=42)
+dt_classifier.fit(X_train_class, y_train_class)
+dt_acc = dt_classifier.score(X_test_class, y_test_class)
+
+# Random Forest Classifier
+rf_classifier = RandomForestClassifier(random_state=42)
+rf_classifier.fit(X_train_class, y_train_class)
+rf_acc = rf_classifier.score(X_test_class, y_test_class)
+
+print("\nClassification Model Performances:")
+print("Decision Tree Accuracy:", dt_acc)
+print("Random Forest Accuracy:", rf_acc)
+
+# Analysis of Variables and Practical Significance of Findings
+# Extract the coefficients and their corresponding variable names
+coefficients = multi_lin_reg.coef_
+variable_names = ['RetractionYear']
+
+# Create a DataFrame to display the coefficients
+coefficients_df = pd.DataFrame({'Variable': variable_names, 'Coefficient': coefficients})
+print("\nCoefficients of Multiple Linear Regression Model:")
+print(coefficients_df)
+
+# Visualizations
+# Scatter plot for multiple linear regression
+plt.figure(figsize=(10, 6))
+plt.scatter(X_test, y_test, color='blue', label='Actual')
+plt.plot(X_test, y_pred_multi, color='red', linewidth=2, label='Predicted')
+plt.title('Multiple Linear Regression: Actual vs Predicted CitationCount')
+plt.xlabel('RetractionYear')
+plt.ylabel('CitationCount')
+plt.legend()
+plt.show()
+
+# Bar plot for coefficients
+plt.figure(figsize=(8, 5))
+sns.barplot(x='Variable', y='Coefficient', data=coefficients_df)
+plt.title('Coefficients of Multiple Linear Regression Model')
+plt.xlabel('Variable')
+plt.ylabel('Coefficient')
+plt.show()
+
+# Bar plot for classification model performances
+models = ['Decision Tree', 'Random Forest']
+accuracies = [dt_acc, rf_acc]
+plt.figure(figsize=(8, 5))
+sns.barplot(x=models, y=accuracies)
+plt.title('Classification Model Performances')
+plt.xlabel('Model')
+plt.ylabel('Accuracy')
+plt.ylim(0, 1)
+plt.show()
+
+# Displaying tables
+# Table for Multiple Linear Regression Model Performance
+multi_reg_table = pd.DataFrame({"Mean Squared Error": [mse_multi], "R-squared": [r2_multi]})
+print("\nMultiple Linear Regression Model Performance:")
+print(multi_reg_table)
+
+# Table for Classification Model Performances
+class_model_table = pd.DataFrame({"Decision Tree Accuracy": [dt_acc], "Random Forest Accuracy": [rf_acc]})
+print("\nClassification Model Performances:")
+print(class_model_table)
+
+
